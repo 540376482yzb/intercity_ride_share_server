@@ -20,12 +20,14 @@ app.use(
   })
 );
 
-app.get('/api/users',(req,res) => {
-  const users =[
-    {name:'zhou'},
-    {name:'monster'}
+app.get('/api/cheeses',(req,res) => {
+  const cheeses =[
+    'blue cheese',
+    'purple cheese',
+    'orange cheese',
+    'apple cheese'
   ]
-  res.json(users)
+  res.json(cheeses)
 })
 app.get('/api/lunch', (req,res) => {
   res.send('hello')
