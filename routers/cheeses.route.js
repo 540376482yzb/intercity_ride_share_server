@@ -6,7 +6,7 @@ router.get('/cheeses', (req, res, next) => {
 		.then(cheeses => res.status(200).json(cheeses))
 		.catch(next)
 })
-router.post('/', (req, res, next) => {
+router.post('/cheeses', (req, res, next) => {
 	const { name } = req.body
 	if (!name) {
 		const err = new Error('name required')
