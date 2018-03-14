@@ -1,0 +1,42 @@
+[
+	{
+		"_id": "000000000000000000000000",
+		"email": "email1@gmail.com",
+		"firstName": "john1",
+		"lastName": "snow",
+		"password": "snowlife1010",
+		"rating": "2"
+	},
+	{
+		"_id": "000000000000000000000001",
+		"email": "email2@gmail.com",
+		"firstName": "john2",
+		"lastName": "snow",
+		"password": "snowlife1010",
+		"rating": "3"
+	},
+	{
+		"_id": "000000000000000000000002",
+		"email": "email3@gmail.com",
+		"firstName": "john3",
+		"lastName": "snow",
+		"password": "snowlife1010",
+		"rating:": "4"
+	},
+	{
+		"_id": "000000000000000000000003",
+		"email": "email4@gmail.com",
+		"firstName": "john4",
+		"lastName": "snow",
+		"password": "snowlife1010",
+		"rating": "3"
+	},
+	{
+		"_id": "000000000000000000000004",
+		"email": "email5@gmail.com",
+		"firstName": "john4",
+		"lastName": "snow",
+		"password": "snowlife1010",
+		"rating": "2"
+	}
+]

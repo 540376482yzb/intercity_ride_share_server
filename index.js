@@ -7,7 +7,9 @@ const { dbConnect } = require('./db-mongoose')
 // const {dbConnect} = require('./db-knex');
 
 const app = express()
-const cheesesRouter = require('./routers/cheeses.route')
+const ridesRouter = require('./routers/rides.route')
+const usersRouter = require('./routers/users.route')
+const authRouter = require('./routers/auth.route')
 //morgan logger middleware
 app.use(
 	morgan(process.env.NODE_ENV === 'production' ? 'common' : 'dev', {
@@ -24,7 +26,9 @@ app.use(
 app.use(express.json())
 
 //routes mounting
-app.use('/api', cheesesRouter)
+app.use('/api/board', ridesRouter)
+app.use('/api/sign-up', usersRouter)
+app.use('/api/log-in', authRouter)
 
 // Catch-all 404
 app.use(function(req, res, next) {
