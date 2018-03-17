@@ -5,7 +5,7 @@
 		"startState": "state101",
 		"arriveCity": "city202",
 		"arriveState": "state202",
-		"scheduleDate": "03 24 2018",
+		"scheduleDate": "03-24-2018",
 		"rideCost": "15",
 		"driver": "000000000000000000000000",
 		"disClaimer": "yayaya"
@@ -16,7 +16,7 @@
 		"startState": "state101",
 		"arriveCity": "city202",
 		"arriveState": "state202",
-		"scheduleDate": "03 25 2018",
+		"scheduleDate": "03-25-2018",
 		"rideCost": "10",
 		"driver": "000000000000000000000001"
 	},
@@ -26,7 +26,7 @@
 		"startState": "state101",
 		"arriveCity": "city202",
 		"arriveState": "state202",
-		"scheduleDate": "03 24 2018",
+		"scheduleDate": "03-24-2018",
 		"rideCost": "20",
 		"driver": "000000000000000000000002"
 	},
@@ -36,7 +36,7 @@
 		"startState": "state101",
 		"arriveCity": "city202",
 		"arriveState": "state202",
-		"scheduleDate": "03 24 2018",
+		"scheduleDate": "03-24-2018",
 		"rideCost": "30",
 		"driver": "000000000000000000000003"
 	}
