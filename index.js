@@ -1,21 +1,28 @@
+require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 const morgan = require('morgan')
 
 const { PORT, CLIENT_ORIGIN } = require('./config')
 const { dbConnect } = require('./db-mongoose')
-// const {dbConnect} = require('./db-knex');
 
 const app = express()
 const ridesRouter = require('./routers/rides.route')
 const usersRouter = require('./routers/users.route')
 const authRouter = require('./routers/auth.route')
+
+//passport
+const passport = require('passport')
+const localStrategy = require('./passport/local')
+const jwtStrategy = require('./passport/jwt')
+
 //morgan logger middleware
 app.use(
 	morgan(process.env.NODE_ENV === 'production' ? 'common' : 'dev', {
 		skip: (req, res) => process.env.NODE_ENV === 'test'
 	})
 )
+
 // cors middleware
 app.use(
 	cors({
@@ -25,10 +32,17 @@ app.use(
 // body parser middleware
 app.use(express.json())
 
+//deploy passport strategy
+passport.use(localStrategy)
+passport.use(jwtStrategy)
+
 //routes mounting
+app.use('/api/auth', usersRouter)
+app.use('/api/auth', authRouter)
+
+app.use(passport.authenticate('jwt', { session: false, failWithError: true }))
+//protected route
 app.use('/api/board', ridesRouter)
-app.use('/api/sign-up', usersRouter)
-app.use('/api/log-in', authRouter)
 
 // Catch-all 404
 app.use(function(req, res, next) {

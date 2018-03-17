@@ -1,24 +1,17 @@
 const mongoose = require('mongoose')
 
 const rideSchema = new mongoose.Schema({
-	startCity: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: 'City',
-		require: true
-	},
-	arriveCity: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: 'City',
-		require: true
-	},
-	scheduleDate: { type: Date, require: true, index: true },
+	startCity: { type: String, require: true },
+	startState: { type: String, require: true },
+	arriveState: { type: String, require: true },
+	arriveCity: { type: String, require: true },
+	scheduleDate: { type: String, require: true },
 	rideCost: { type: Number, default: 0 },
 	disClaimer: { type: String, default: '' },
 	driver: { type: mongoose.Schema.Types.ObjectId, ref: 'User', require: true },
-	requests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+	requests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+	match: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
 })
-
-rideSchema.index({ startCity: 1, arriveCity: 1, scheduleDate: 1 })
 
 rideSchema.set('toObject', {
 	transform: function(doc, ret) {

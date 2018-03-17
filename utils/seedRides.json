@@ -1,34 +1,42 @@
 [
 	{
 		"_id": "100000000000000000000000",
-		"startCity": "200000000000000000000000",
-		"arriveCity": "200000000000000000000001",
-		"scheduleDate": "2018-03-24",
+		"startCity": "city101",
+		"startState": "state101",
+		"arriveCity": "city202",
+		"arriveState": "state202",
+		"scheduleDate": "03 24 2018",
 		"rideCost": "15",
 		"driver": "000000000000000000000000",
 		"disClaimer": "yayaya"
 	},
 	{
 		"_id": "100000000000000000000001",
-		"startCity": "200000000000000000000001",
-		"arriveCity": "200000000000000000000002",
-		"scheduleDate": "2018-04-01",
+		"startCity": "city101",
+		"startState": "state101",
+		"arriveCity": "city202",
+		"arriveState": "state202",
+		"scheduleDate": "03 25 2018",
 		"rideCost": "10",
 		"driver": "000000000000000000000001"
 	},
 	{
 		"_id": "100000000000000000000002",
-		"startCity": "200000000000000000000003",
-		"arriveCity": "200000000000000000000000",
-		"scheduleDate": "2018-03-28",
+		"startCity": "city101",
+		"startState": "state101",
+		"arriveCity": "city202",
+		"arriveState": "state202",
+		"scheduleDate": "03 24 2018",
 		"rideCost": "20",
 		"driver": "000000000000000000000002"
 	},
 	{
 		"_id": "100000000000000000000003",
-		"startCity": "200000000000000000000000",
-		"arriveCity": "200000000000000000000001",
-		"scheduleDate": "2018-03-25",
+		"startCity": "city101",
+		"startState": "state101",
+		"arriveCity": "city202",
+		"arriveState": "state202",
+		"scheduleDate": "03 24 2018",
 		"rideCost": "30",
 		"driver": "000000000000000000000003"
 	}
