@@ -2,11 +2,12 @@ const express = require('express')
 const router = express.Router()
 const User = require('../models/users')
 
-router.get('/sign-up', (req, res, next) => {
-	User.find()
+router.get('/:id', (req, res, next) => {
+	User.findById(req.params.id)
 		.then(users => res.status(200).json(users))
 		.catch(next)
 })
+
 router.post('/sign-up', (req, res, next) => {
 	const { email, firstName, lastName, password } = req.body
 

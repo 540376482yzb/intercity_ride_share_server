@@ -7,7 +7,8 @@ const userSchema = new mongoose.Schema({
 	lastName: { type: String, require: true },
 	password: { type: String, require: true },
 	host: { type: Boolean, default: false },
-	match: { type: mongoose.Schema.Types.ObjectId, ref: 'Ride' }
+	match: { type: mongoose.Schema.Types.ObjectId, ref: 'Ride', default: null },
+	sentRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Ride' }]
 })
 
 userSchema.index({ email: 1 }, { unique: true })

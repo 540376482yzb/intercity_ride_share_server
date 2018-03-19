@@ -37,7 +37,7 @@ passport.use(localStrategy)
 passport.use(jwtStrategy)
 
 //routes mounting
-app.use('/api/auth', usersRouter)
+app.use('/api/user', usersRouter)
 app.use('/api/auth', authRouter)
 
 app.use(passport.authenticate('jwt', { session: false, failWithError: true }))
