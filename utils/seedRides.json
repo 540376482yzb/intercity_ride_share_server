@@ -1,43 +1,23 @@
 [
 	{
 		"_id": "100000000000000000000000",
-		"startCity": "city101",
-		"startState": "state101",
-		"arriveCity": "city202",
-		"arriveState": "state202",
+		"startCity": "Pittsburgh",
+		"startState": "PA",
+		"arriveCity": "New York",
+		"arriveState": "NY",
 		"scheduleDate": "03-24-2018",
 		"rideCost": "15",
 		"driver": "000000000000000000000000",
-		"disClaimer": "yayaya"
+		"disClaimer": "Please properly behave."
 	},
 	{
 		"_id": "100000000000000000000001",
-		"startCity": "city101",
-		"startState": "state101",
-		"arriveCity": "city202",
-		"arriveState": "state202",
+		"startCity": "Los Angeles",
+		"startState": "CA",
+		"arriveCity": "San Francisco",
+		"arriveState": "CA",
 		"scheduleDate": "03-25-2018",
 		"rideCost": "10",
 		"driver": "000000000000000000000001"
-	},
-	{
-		"_id": "100000000000000000000002",
-		"startCity": "city101",
-		"startState": "state101",
-		"arriveCity": "city202",
-		"arriveState": "state202",
-		"scheduleDate": "03-24-2018",
-		"rideCost": "20",
-		"driver": "000000000000000000000002"
-	},
-	{
-		"_id": "100000000000000000000003",
-		"startCity": "city101",
-		"startState": "state101",
-		"arriveCity": "city202",
-		"arriveState": "state202",
-		"scheduleDate": "03-24-2018",
-		"rideCost": "30",
-		"driver": "000000000000000000000003"
 	}
 ]

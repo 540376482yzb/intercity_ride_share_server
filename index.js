@@ -11,6 +11,7 @@ const ridesRouter = require('./routers/rides.route')
 const usersRouter = require('./routers/users.route')
 const authRouter = require('./routers/auth.route')
 
+const socket = require('socket.io')
 //passport
 const passport = require('passport')
 const localStrategy = require('./passport/local')
@@ -37,6 +38,9 @@ passport.use(localStrategy)
 passport.use(jwtStrategy)
 
 //routes mounting
+
+// app.use(express.static('public'))
+
 app.use('/api/user', usersRouter)
 app.use('/api/auth', authRouter)
 
@@ -70,6 +74,13 @@ function runServer(port = PORT) {
 			console.error('Express failed to start')
 			console.error(err)
 		})
+	const io = socket(server)
+	io.on('connection', socket => {
+		console.log(socket.id)
+		socket.on('SEND_MESSAGE', function(data) {
+			io.emit('RECEIVE_MESSAGE', data)
+		})
+	})
 }
 
 if (require.main === module) {
@@ -77,4 +88,4 @@ if (require.main === module) {
 	runServer()
 }
 
-module.exports = { app }
+module.exports = app

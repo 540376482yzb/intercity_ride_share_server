@@ -46,9 +46,9 @@ router.post('/', (req, res, next) => {
 	if (validateError) return next(validateError)
 
 	const newRide = {
-		startCity: startCity.toUpperCase(),
+		startCity: startCity.toLowerCase(),
 		startState: startState.toUpperCase(),
-		arriveCity: arriveCity.toUpperCase(),
+		arriveCity: arriveCity.toLowerCase(),
 		arriveState: arriveState.toUpperCase(),
 		scheduleDate,
 		rideCost,
@@ -174,15 +174,40 @@ router.put('/:id', (req, res, next) => {
 		.catch(next)
 })
 
-router.delete('/requests/:id', (req, res, next) => {
-	//todos: verify it's same person
+router.delete('/:id', (req, res, next) => {
 	const rideId = req.params.id
-	Ride.findByIdAndUpdate(rideId, { requests: [] })
-		.then(result =>
-			res.status(202).json({ message: 'requests delete success', rideId })
+	const { currentUserId } = req.body
+	const validateError = validateUser(req, currentUserId)
+	if (validateError) return next(validateError)
+
+	Ride.findByIdAndRemove(rideId)
+		.then(() =>
+			User.findByIdAndUpdate(
+				currentUserId,
+				{ $set: { host: false } },
+				{ new: true }
+			)
 		)
+		.then(user => {
+			res.status(201).json({ message: 'update success', user })
+		})
 		.catch(next)
 })
+
+// router.delete('/requests/:id', (req, res, next) => {
+// 	//todos: verify it's same person
+// 	const rideId = req.params.id
+// 	const { currentUserId, userId } = req.body
+
+// 	const validateError = validateUser(req, currentUserId)
+// 	if (validateError) return next(validateError)
+
+// 	Ride.findByIdAndUpdate(rideId, { $pull: { requests: userId } })
+// 		.then(result =>
+// 			res.status(202).json({ message: 'requests delete success', rideId })
+// 		)
+// 		.catch(next)
+// })
 
 router.delete('/match/:id', (req, res, next) => {
 	//todo verify driver is the same user in token
