@@ -1,45 +1,78 @@
-# Thinkful Backend Template
+## Ride Sharing App Server App
+Server API writing in `Node Js` using `Express` .Provides api service for [client app](https://github.com/540376482yzb/intercities_ride_sharing_client)
 
-A template for developing and deploying Node.js apps.
 
-## Getting started
+## How to get stated it
+   * Clone or Fork this project to your local machine
+   * npm install to download the dependency for this app
+   * includes `.evn` file, inside write `JWT=[your_secrete]` for you jwt secrete
+   * npm start
+   
+## Avaliable API end ponits
+  #### sign up on `/api/user/sign-up`
+  example code for input:
+  ```
+   {
+   "email":"demo22@gmail.com",
+   "password":"5408",
+   "fistName":"Zhou",
+   "lastName":"Yang"
+   }
+  ```
+  example code for output:
+  ```
+  {
+    "email": "demo22@gmail.com",
+    "lastName": "Yang",
+    "rating": "5",
+    "host": false,
+    "match": null,
+    "sentRequests": [],
+    "id": "5ab54df260527017508001cf"
+}
+  ```
+  User registration system utilizes [bcryptJs](https://www.npmjs.com/package/bcryptjs) to protect user information.
 
-### Setting up a project
+ #### log in on `api/auth/log-in`
+ example code for input:
+ ```
+    {
+      "email":"demo22@gmail.com",
+      "password":"5408"
+   }
+ ```
+ example code for output:
+ ```
+{
+    "authToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7InJhdGluZyI6IjUiLCJob3N0IjpmYWxzZSwibWF0Y2giOm51bGwsInNlbnRSZXF1ZXN0cyI6W10sImVtYWlsIjoiZGVtbzIyQGdtYWlsLmNvbSIsImxhc3ROYW1lIjoiWWFuZyIsImlkIjoiNWFiNTRkZjI2MDUyNzAxNzUwODAwMWNmIn0sImlhdCI6MTUyMTgzMTUxMywiZXhwIjoxNTIyNDM2MzEzLCJzdWIiOiJkZW1vMjJAZ21haWwuY29tIn0.a3y1yRFV4mRRC30W6YTzKQJx6Qw2LptGJR-rz0UlorY"
+}
+ ```
 
-* Move into your projects directory: `cd ~/YOUR_PROJECTS_DIRECTORY`
-* Clone this repository: `git clone https://github.com/Thinkful-Ed/backend-template YOUR_PROJECT_NAME`
-* Move into the project directory: `cd YOUR_PROJECT_NAME`
-* Install the dependencies: `npm install`
-* Create a new repo on GitHub: https://github.com/new
-    * Make sure the "Initialize this repository with a README" option is left unchecked
-* Update the remote to point to your GitHub repository: `git remote set-url origin https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY_NAME`
+#### refresh jwt token on `api/auth/refresh`
 
-### Working on the project
+---
 
-* Move into the project directory: `cd ~/YOUR_PROJECTS_DIRECTORY/YOUR_PROJECT_NAME`
-* Run the development task: `npm start`
-    * Starts a server running at http://localhost:8080
-    * Automatically restarts when any of your files change
+### Following end points are protected by jwt Authentication
 
-## Databases
 
-By default, the template is configured to connect to a MongoDB database using Mongoose.  It can be changed to connect to a PostgreSQL database using Knex by replacing any imports of `db-mongoose.js` with imports of `db-knex.js`, and uncommenting the Postgres `DATABASE_URL` lines in `config.js`.
+#### Retrieve un-bias results on (GET) `api/board`
 
-## Deployment
+#### Retrieve matched ride on (GET)  `api/board/:id`
 
-Requires the [Heroku CLI client](https://devcenter.heroku.com/articles/heroku-command-line).
+#### Host an new trip on (POST) `api/board`
 
-### Setting up the project on Heroku
+#### Edit existing trip on (PUT) `api/board/:id`
 
-* Move into the project directory: `cd ~/YOUR_PROJECTS_DIRECTORY/YOUR_PROJECT_NAME`
-* Create the Heroku app: `heroku create PROJECT_NAME`
+#### Update Pending Requests on (PUT) `api/board/requests/:id`
 
-* If your backend connects to a database, you need to configure the database URL:
-    * For a MongoDB database: `heroku config:set DATABASE_URL=mongodb://USERNAME:PASSWORD@HOST:PORT/DATABASE_NAME`
-    * For a PostgreSQL database: `heroku config:set DATABASE_URL=postgresql://USERNAME:PASSWORD@HOST:PORT/DATABASE_NAME`
+#### Update Match Ride on (PUT) `api/board/match/:id`
 
-* If you are creating a full-stack app, you need to configure the client origin: `heroku config:set CLIENT_ORIGIN=https://www.YOUR_DEPLOYED_CLIENT.com`
+#### Delete an trip on (DELELTE) `api/board/:id`
 
-### Deploying to Heroku
+#### Delete request on (DELELTE) `api/board/requests/:id`
 
-* Push your code to Heroku: `git push heroku master`
+
+
+
+
+
