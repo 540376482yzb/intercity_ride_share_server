@@ -50,10 +50,7 @@ Server API writing in `Node Js` using `Express` .Provides api service for [clien
 
 #### refresh jwt token on `api/auth/refresh`
 
----
-
 ### Following end points are protected by jwt Authentication
-
 
 #### Retrieve un-bias results on (GET) `api/board`
 
