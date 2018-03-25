@@ -9,15 +9,5 @@
 		"rideCost": "15",
 		"driver": "000000000000000000000000",
 		"disClaimer": "Please properly behave."
-	},
-	{
-		"_id": "100000000000000000000001",
-		"startCity": "Los Angeles",
-		"startState": "CA",
-		"arriveCity": "San Francisco",
-		"arriveState": "CA",
-		"scheduleDate": "03-25-2018",
-		"rideCost": "10",
-		"driver": "000000000000000000000001"
 	}
 ]

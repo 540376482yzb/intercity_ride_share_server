@@ -135,7 +135,7 @@ router.put('/match/:id', (req, res, next) => {
 			return Promise.all([driverUpdate, passengerUpdate])
 		})
 		.then(results => {
-			res.status(200).json({ message: 'update completed', rideId })
+			res.status(201).json({ message: 'update completed', rideId })
 		})
 		.catch(next)
 })

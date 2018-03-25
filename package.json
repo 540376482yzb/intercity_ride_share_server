@@ -5,8 +5,10 @@
 	"main": "index.js",
 	"scripts": {
 		"start": "nodemon index.js",
-		"test": "cross-env NODE_ENV=test mocha --timeout 15000  --colors --watch --exit test/setup.test.js */*.test.js",
-		"cover": "nodemon --exec nyc --reporter=lcov --reporter=text-summary mocha test/setup.test.js */*.test.js",
+		"test":
+			"cross-env NODE_ENV=test mocha --timeout 15000  --colors --exit test/setup.test.js */*.test.js",
+		"cover":
+			"nodemon --exec nyc --reporter=lcov --reporter=text-summary mocha test/setup.test.js */*.test.js",
 		"heroku": "node index.js",
 		"travis": "mocha test/setup.test.js */*.test.js"
 	},

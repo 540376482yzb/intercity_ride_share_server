@@ -14,5 +14,13 @@
 		"lastName": "share",
 		"password": "5408",
 		"rating": "3"
+	},
+	{
+		"_id": "000000000000000000000002",
+		"email": "admin3@gmail.com",
+		"firstName": "admin3",
+		"lastName": "share",
+		"password": "5408",
+		"rating": "5"
 	}
 ]
