@@ -76,9 +76,32 @@ function runServer(port = PORT) {
 		})
 	const io = socket(server)
 	io.on('connection', socket => {
-		console.log(socket.id)
+		console.log('connected to socket io', socket.id)
+
+		//an user requests to join an room
+		socket.on('JOIN_ROOM', data => {
+			const { roomId, currentUser } = data
+			socket.join(roomId)
+			console.log('join room', roomId)
+			io.sockets
+				.in(roomId)
+				.emit('JOIN_ROOM', `${currentUser.firstName} has entered the room`)
+		})
+		//an user left the chat room
+		socket.on('LEAVING_ROOM', data => {
+			const { roomId, username } = data
+			io.sockets
+				.in(roomId)
+				.emit('LEAVING_ROOM', `${username} has left the room`)
+		})
 		socket.on('SEND_MESSAGE', function(data) {
-			io.emit('RECEIVE_MESSAGE', data)
+			const { roomId, messageBody } = data
+			console.log('sent message', messageBody)
+			io.sockets.in(roomId).emit('RECEIVE_MESSAGE', messageBody)
+		})
+
+		socket.on('disconnect', function() {
+			console.log('user disconnect')
 		})
 	})
 }
