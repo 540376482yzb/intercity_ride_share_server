@@ -74,6 +74,7 @@ function runServer(port = PORT) {
 			console.error('Express failed to start')
 			console.error(err)
 		})
+
 	const io = socket(server)
 	io.on('connection', socket => {
 		console.log('connected to socket io', socket.id)
@@ -83,17 +84,15 @@ function runServer(port = PORT) {
 			const { roomId, currentUser } = data
 			socket.join(roomId)
 			console.log('join room', roomId)
-			io.sockets
-				.in(roomId)
-				.emit('JOIN_ROOM', `${currentUser.firstName} has entered the room`)
+			io.sockets.in(roomId).emit('JOIN_ROOM', `${currentUser.firstName} has entered the room`)
 		})
+
 		//an user left the chat room
 		socket.on('LEAVING_ROOM', data => {
 			const { roomId, username } = data
-			io.sockets
-				.in(roomId)
-				.emit('LEAVING_ROOM', `${username} has left the room`)
+			io.sockets.in(roomId).emit('LEAVING_ROOM', `${username} has left the room`)
 		})
+
 		socket.on('SEND_MESSAGE', function(data) {
 			const { roomId, messageBody } = data
 			console.log('sent message', messageBody)
