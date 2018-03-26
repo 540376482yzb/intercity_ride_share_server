@@ -52,19 +52,19 @@ Server API writing in `Node Js` using `Express` .Provides api service for [clien
 
 ### Following end points are protected by jwt Authentication
 
-#### Retrieve un-bias results on (GET) `api/board`
+Retrieve un-bias results on (GET) `api/board`
 
-#### Retrieve matched ride on (GET)  `api/board/:id`
+Retrieve matched ride on (GET)  `api/board/:id`
 
-#### Host an new trip on (POST) `api/board`
+Host an new trip on (POST) `api/board`
 
-#### Edit existing trip on (PUT) `api/board/:id`
+Edit existing trip on (PUT) `api/board/:id`
 
-#### Update Pending Requests on (PUT) `api/board/requests/:id`
+Update Pending Requests on (PUT) `api/board/requests/:id`
 
-#### Update Match Ride on (PUT) `api/board/match/:id`
+Update Match Ride on (PUT) `api/board/match/:id`
 
-#### Delete an trip on (DELELTE) `api/board/:id`
+Delete an trip on (DELELTE) `api/board/:id`
 
 #### Delete request on (DELELTE) `api/board/requests/:id`
 
