@@ -3,6 +3,7 @@ const router = express.Router()
 const Ride = require('../models/rides')
 const User = require('../models/users')
 const jwtDecode = require('jwt-decode')
+
 router.get('/', (req, res, next) => {
 	Ride.find()
 		.populate('driver')
@@ -38,7 +39,9 @@ router.post('/', (req, res, next) => {
 		scheduleDate,
 		rideCost,
 		driver,
-		disClaimer
+		startCoordinate,
+		arriveCoordinate,
+		maxOccupancy
 	} = req.body
 
 	//validate user
@@ -50,14 +53,29 @@ router.post('/', (req, res, next) => {
 		startState: startState.toUpperCase(),
 		arriveCity: arriveCity.toLowerCase(),
 		arriveState: arriveState.toUpperCase(),
+		maxOccupancy,
+		startCoordinate,
+		arriveCoordinate,
 		scheduleDate,
 		rideCost,
 		driver,
-		disClaimer
+		match: [driver]
 	}
-	User.findOneAndUpdate({ _id: driver }, { host: true }, { new: true })
+	User.findOne({_id: driver})
 		.then(user => {
+			if (user.host) {
+				const error = new Error('You can\'t host 2 trips at the same time')
+				error.status = 400
+				return next(error)
+			}
 			return Ride.create(newRide)
+		})
+		.then(ride => {
+			return User.findOneAndUpdate(
+				{_id: driver},
+				{host: true, match: ride.id, sentRequests: []},
+				{new: true}
+			)
 		})
 		.then(rides => {
 			return res.status(200).json(rides)
@@ -69,8 +87,8 @@ router.post('/', (req, res, next) => {
 
 router.put('/requests/:id', (req, res, next) => {
 	//to do validation
-	const { userId } = req.body
-	const { id } = req.params
+	const {userId} = req.body
+	const {id} = req.params
 	//to do compare token user to userId from req.body
 	// to verify it's from same person
 
@@ -79,24 +97,12 @@ router.put('/requests/:id', (req, res, next) => {
 
 	User.findById(userId)
 		.then(user => {
-			const alreadySent = user.sentRequests.find(requestId =>
-				requestId.equals(id)
-			)
+			const alreadySent = user.sentRequests.find(requestId => requestId.equals(id))
 			if (alreadySent) {
-				return res
-					.status(400)
-					.json({ message: 'You have already requested it' })
+				return res.status(400).json({message: 'You have already requested it'})
 			}
-			const updateRide = Ride.findByIdAndUpdate(
-				id,
-				{ $push: { requests: userId } },
-				{ new: true }
-			)
-			const updateUser = User.findByIdAndUpdate(
-				userId,
-				{ $push: { sentRequests: id } },
-				{ new: true }
-			)
+			const updateRide = Ride.findByIdAndUpdate(id, {$push: {requests: userId}}, {new: true})
+			const updateUser = User.findByIdAndUpdate(userId, {$push: {sentRequests: id}}, {new: true})
 			return Promise.all([updateRide, updateUser])
 		})
 		.then(([ride, user]) => {
@@ -120,24 +126,34 @@ router.put('/requests/:id', (req, res, next) => {
 
 router.put('/match/:id', (req, res, next) => {
 	//todo verify driver is the same user in token
-	const { driverId, passengerId } = req.body
+	const {driverId, passengerId, manualLock} = req.body
 	const rideId = req.params.id
 
 	const validateError = validateUser(req, driverId)
 	if (validateError) return next(validateError)
-	Ride.findByIdAndUpdate(rideId, { match: [driverId, passengerId] })
-		.then(ride => {
-			const driverUpdate = User.findByIdAndUpdate(driverId, { match: rideId })
-			const passengerUpdate = User.findByIdAndUpdate(passengerId, {
-				match: rideId,
-				host: null
+	if (manualLock) {
+		Ride.findByIdAndUpdate(rideId, {lock: manualLock === 'lock' ? true : false})
+			.then(results => {
+				res.status(201).json({message: 'update completed', rideId})
 			})
-			return Promise.all([driverUpdate, passengerUpdate])
-		})
-		.then(results => {
-			res.status(201).json({ message: 'update completed', rideId })
-		})
-		.catch(next)
+			.catch(next)
+	} else {
+		User.findByIdAndUpdate(passengerId, {$set: {match: rideId}}, {new: true})
+			.then(user => Ride.findById(rideId))
+			.then(ride => {
+				console.log(ride.match.length)
+				const lock = ride.match.length >= ride.maxOccupation - 1 ? true : false
+				return Ride.findByIdAndUpdate(
+					rideId,
+					{$push: {match: passengerId}, $set: {lock}},
+					{new: true}
+				)
+			})
+			.then(results => {
+				res.status(201).json({message: 'update completed', rideId})
+			})
+			.catch(next)
+	}
 })
 
 router.put('/:id', (req, res, next) => {
@@ -164,55 +180,49 @@ router.put('/:id', (req, res, next) => {
 		arriveCity,
 		arriveState,
 		scheduleDate,
-		rideCost,
-		disClaimer
+		rideCost
 	}
-	Ride.findByIdAndUpdate(req.params.id, { $set: update }, { new: true })
+	Ride.findByIdAndUpdate(req.params.id, {$set: update}, {new: true})
 		.then(ride => {
-			res.status(200).json({ message: 'update successful', content: ride })
+			res.status(200).json({message: 'update successful', content: ride})
 		})
 		.catch(next)
 })
 
 router.delete('/:id', (req, res, next) => {
 	const rideId = req.params.id
-	const { currentUserId } = req.body
+	const {currentUserId} = req.body
 	const validateError = validateUser(req, currentUserId)
 	if (validateError) return next(validateError)
-
-	Ride.findByIdAndRemove(rideId)
-		.then(() =>
-			User.findByIdAndUpdate(
-				currentUserId,
-				{ $set: { host: false } },
-				{ new: true }
-			)
-		)
+	Ride.findById(rideId)
+		.then(ride => {
+			let allPromises = []
+			ride.match.forEach(user => {
+				if (user.toString() === currentUserId) {
+					allPromises.push(
+						User.findByIdAndUpdate(user, {match: null, host: false, pendingReview: null})
+					)
+				} else {
+					allPromises.push(
+						User.findByIdAndUpdate(user, {match: null, host: false, pendingReview: currentUserId})
+					)
+				}
+			})
+			return Promise.all(allPromises)
+		})
+		.then(() => {
+			return Ride.findByIdAndRemove(rideId)
+		})
 		.then(user => {
-			res.status(201).json({ message: 'update success', user })
+			res.status(201).json({message: 'update success'})
 		})
 		.catch(next)
 })
 
-// router.delete('/requests/:id', (req, res, next) => {
-// 	//todos: verify it's same person
-// 	const rideId = req.params.id
-// 	const { currentUserId, userId } = req.body
-
-// 	const validateError = validateUser(req, currentUserId)
-// 	if (validateError) return next(validateError)
-
-// 	Ride.findByIdAndUpdate(rideId, { $pull: { requests: userId } })
-// 		.then(result =>
-// 			res.status(202).json({ message: 'requests delete success', rideId })
-// 		)
-// 		.catch(next)
-// })
-
 router.delete('/match/:id', (req, res, next) => {
 	//todo verify driver is the same user in token
 
-	const { driverId, passengerId } = req.body
+	const {driverId, passengerId} = req.body
 
 	const validateError = validateUser(req, driverId)
 	if (validateError) return next(validateError)
@@ -220,22 +230,18 @@ router.delete('/match/:id', (req, res, next) => {
 	const rideId = req.params.id
 	Ride.findByIdAndRemove(rideId)
 		.then(() => {
-			const driverUpdate = User.findByIdAndUpdate(
-				driverId,
-				{ match: null, host: null },
-				{ new: true }
-			)
+			const driverUpdate = User.findByIdAndUpdate(driverId, {match: null, host: null}, {new: true})
 			const passengerUpdate = User.findByIdAndUpdate(
 				passengerId,
 				{
 					match: null
 				},
-				{ new: true }
+				{new: true}
 			)
 			return Promise.all([driverUpdate, passengerUpdate])
 		})
 		.then(results => {
-			res.status(200).json({ message: 'update completed', results })
+			res.status(200).json({message: 'update completed', results})
 		})
 		.catch(next)
 })

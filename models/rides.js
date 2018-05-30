@@ -5,12 +5,16 @@ const rideSchema = new mongoose.Schema({
 	startState: { type: String, require: true },
 	arriveState: { type: String, require: true },
 	arriveCity: { type: String, require: true },
+	startCoordinate: [],
+	arriveCoordinate: [],
 	scheduleDate: { type: String, require: true },
 	rideCost: { type: Number, default: 0 },
-	disClaimer: { type: String, default: '' },
 	driver: { type: mongoose.Schema.Types.ObjectId, ref: 'User', require: true },
-	requests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-	match: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+	messages: [],
+	match: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+	applicants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+	maxOccupancy: { type: Number, default: 4 },
+	lock: { type: Boolean, default: false }
 })
 
 rideSchema.set('toObject', {

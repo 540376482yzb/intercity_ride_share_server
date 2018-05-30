@@ -3,8 +3,8 @@ const express = require('express')
 const cors = require('cors')
 const morgan = require('morgan')
 
-const { PORT, CLIENT_ORIGIN } = require('./config')
-const { dbConnect } = require('./db-mongoose')
+const {PORT, CLIENT_ORIGIN} = require('./config')
+const {dbConnect} = require('./db-mongoose')
 
 const app = express()
 const ridesRouter = require('./routers/rides.route')
@@ -44,7 +44,7 @@ passport.use(jwtStrategy)
 app.use('/api/user', usersRouter)
 app.use('/api/auth', authRouter)
 
-app.use(passport.authenticate('jwt', { session: false, failWithError: true }))
+app.use(passport.authenticate('jwt', {session: false, failWithError: true}))
 //protected route
 app.use('/api/board', ridesRouter)
 
@@ -76,31 +76,78 @@ function runServer(port = PORT) {
 		})
 
 	const io = socket(server)
+	const Rides = require('./models/rides')
+	const Users = require('./models/users')
+
+	let rooms = {}
+	let mapUserToRoom = {}
 	io.on('connection', socket => {
 		console.log('connected to socket io', socket.id)
-
 		//an user requests to join an room
-		socket.on('JOIN_ROOM', data => {
-			const { roomId, currentUser } = data
-			socket.join(roomId)
-			console.log('join room', roomId)
-			io.sockets.in(roomId).emit('JOIN_ROOM', `${currentUser.firstName} has entered the room`)
-		})
 
+		socket.on('JOIN_ROOM', data => {
+			const {roomId, user} = data
+			socket.join(roomId)
+			const id = socket.id
+			mapUserToRoom[id] = {user, roomId}
+			if (!rooms.roomId) {
+				rooms.roomId = [{socket: socket.id, user: user.id}]
+			} else {
+				rooms.roomId.push({socket: socket.id, user: user.id})
+			}
+			io.sockets.in(roomId).emit('JOIN_ROOM', {user, room: rooms.roomId})
+		})
 		//an user left the chat room
 		socket.on('LEAVING_ROOM', data => {
-			const { roomId, username } = data
-			io.sockets.in(roomId).emit('LEAVING_ROOM', `${username} has left the room`)
+			console.log('leaving')
+			rooms.roomId = rooms.roomId.filter(entry => entry.user === data.user.id)
+			io.sockets.in(data.roomId).emit('LEAVING_ROOM', data.user)
 		})
-
 		socket.on('SEND_MESSAGE', function(data) {
-			const { roomId, messageBody } = data
-			console.log('sent message', messageBody)
-			io.sockets.in(roomId).emit('RECEIVE_MESSAGE', messageBody)
+			const {roomId, message} = data
+			Rides.findByIdAndUpdate(roomId, {$push: {messages: message}}, {new: true}).then(ride =>
+				io.sockets.in(roomId).emit('RECEIVE_MESSAGE', ride.messages)
+			)
+		})
+		socket.on('REQUEST_RIDE', ({roomId, message}) => {
+			Rides.findByIdAndUpdate(roomId, {$push: {messages: message}}, {new: true})
+				.then(() =>
+					Users.findByIdAndUpdate(message.user.id, {$push: {sentRequests: roomId}}, {new: true})
+				)
+				.then(() => io.sockets.in(roomId).emit('RECEIVE_RIDE', message))
 		})
 
+		socket.on('ACCEPT_RIDE', ({ride, userId}) => {
+			const messages = ride.messages.map(message => {
+				if (message.type === 'application') {
+					if (message.user.id === userId) {
+						message.completed = 'accepted'
+					}
+				}
+				return message
+			})
+			let lock = false
+			if (ride.match.length === ride.maxOccupancy - 1) {
+				lock = true
+			}
+			Rides.findByIdAndUpdate(
+				ride.id,
+				{$push: {match: userId}, messages, $set: {lock}},
+				{new: true}
+			).then(_ride => {
+				io.sockets.in(ride.id).emit('ACCEPT_RIDE_SUCCESS', ride.id)
+				return Users.findByIdAndUpdate(userId, {sentRequests: [], match: ride.id})
+			})
+		})
 		socket.on('disconnect', function() {
-			console.log('user disconnect')
+			const userId = socket.id
+			const foundUser = mapUserToRoom[userId]
+			if (foundUser) {
+				const roomId = foundUser.roomId
+				const user = foundUser.user
+				rooms.roomId = rooms.roomId.filter(entry => entry.socket !== userId)
+				io.sockets.in(roomId).emit('LEAVING_ROOM', {user, room: rooms.roomId})
+			}
 		})
 	})
 }
